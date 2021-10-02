@@ -77,7 +77,7 @@ async def provider(
 
         if not token:
             raise ValueError(
-                f"Missing token for Modrinth. (Set using --modrinth-token or environment variable MODRINTH_TOKEN)"
+                "Missing token for Modrinth. (Set using --modrinth-token or environment variable MODRINTH_TOKEN)"
             )
 
         async with ModrinthAPI(token=token, config=config) as mapi:
@@ -90,50 +90,50 @@ async def provider(
 
 
 @click.group()
-@click.option(  # type: ignore
+@click.option(
     "-d",
     "--debug",
     help="print exception stacks",
     is_flag=True,
     default=False,
 )
-@click.option(  # type: ignore
+@click.option(
     "-c",
     "--config-file",
     help="alternate .mods.toml",
     default=".mods.toml",
     type=click.Path(),
 )
-@click.option(  # type: ignore
+@click.option(
     "--curseforge",
     "provider",
     help="Use CurseForge to download mods from",
     flag_value="curseforge",
 )
-@click.option(  # type: ignore
+@click.option(
     "--cf",
     "provider",
     help="Use CurseForge to download mods from",
     flag_value="curseforge",
 )
-@click.option(  # type: ignore
+@click.option(
     "--modrinth",
     "provider",
     help="Use Modrinth to download mods from",
     flag_value="modrinth",
 )
-@click.option(  # type: ignore
+@click.option(
     "--mr",
     "provider",
     help="Use Modrinth to download mods from",
     flag_value="modrinth",
 )
-@click.option(  # type: ignore
+@click.option(
     "--modrinth-token",
     help="The GitHub OAuth Access Token for Modrinth authentification",
     envvar="MODRINTH_TOKEN",
 )
-@click.option(  # type: ignore
+@click.option(
     "-p",
     "--provider",
     help="Select the source for downloading mods from",
@@ -157,18 +157,18 @@ def cli(
 
 
 @cli.command(short_help="initialize a new mod list")
-@click.option(  # type: ignore
+@click.option(
     "-f",
     "--force",
     is_flag=True,
     default=False,
     help="Overwrite any existing modlist files",
 )
-@click.argument(  # type: ignore
+@click.argument(
     "game_version",
     required=True,
 )
-@click.argument(  # type: ignore
+@click.argument(
     "mod_loader",
     required=True,
     type=click.Choice(["fabric", "forge"], case_sensitive=False),
@@ -185,11 +185,11 @@ async def init(
 
         Path(file).unlink(missing_ok=True)
     Config.init(file, version=game_version, loader=mod_loader)
-    print(f"Initialized.")
+    print("Initialized.")
 
 
 @cli.command(short_help="Search for matching mods")
-@click.argument(  # type: ignore
+@click.argument(
     "query",
     required=True,
 )
@@ -212,7 +212,7 @@ async def search(ctx: click.Context, query: str) -> None:
 
 
 @cli.command(short_help="show details for the given mod")
-@click.argument("mod", required=True)  # type: ignore
+@click.argument("mod", required=True)
 @click.pass_context
 @handle_exceptions
 @coroutine
@@ -224,7 +224,7 @@ async def info(ctx: click.Context, mod: str) -> None:
 
 
 @cli.command(short_help="download one or more mods")
-@click.argument("mod_ids", required=True, nargs=-1, type=click.STRING)  # type: ignore
+@click.argument("mod_ids", required=True, nargs=-1, type=click.STRING)
 @click.pass_context
 @handle_exceptions
 @coroutine
@@ -240,8 +240,8 @@ async def add(ctx: click.Context, mod_ids: List[str]) -> None:
 
 
 @cli.command(short_help="delete one or more mods")
-@click.argument("mod_ids", nargs=-1, type=click.STRING)  # type: ignore
-@click.option("-a", "--all", is_flag=True, default=False)  # type: ignore
+@click.argument("mod_ids", nargs=-1, type=click.STRING)
+@click.option("-a", "--all", is_flag=True, default=False)
 @click.pass_context
 @handle_exceptions
 @coroutine
@@ -267,7 +267,7 @@ async def remove(ctx: click.Context, mod_ids: List[str], all: bool) -> None:
 
 
 @cli.command(short_help="update one or more mods")
-@click.argument("mod_ids", nargs=-1, type=click.STRING)  # type: ignore
+@click.argument("mod_ids", nargs=-1, type=click.STRING)
 @click.pass_context
 @handle_exceptions
 @coroutine
@@ -333,7 +333,7 @@ async def outdated(ctx: click.Context) -> None:
 
 
 @cli.command(short_help="Try to identify the given files and add them to the config")
-@click.argument("mod_files", required=True, nargs=-1, type=click.STRING)  # type: ignore
+@click.argument("mod_files", required=True, nargs=-1, type=click.STRING)
 @click.pass_context
 @handle_exceptions
 @coroutine
@@ -363,14 +363,14 @@ async def discover(ctx: click.Context, mod_files: List[str]) -> None:
 
 
 @cli.command(short_help="list all compatible version for the given mod")
-@click.option(  # type: ignore
+@click.option(
     "-a",
     "--all",
     is_flag=True,
     default=False,
     help="List all available versions (the list might be VERY long)",
 )
-@click.argument("mod", required=True)  # type: ignore
+@click.argument("mod", required=True)
 @click.pass_context
 @handle_exceptions
 @coroutine
@@ -384,8 +384,8 @@ async def versions(ctx: click.Context, mod: str, all: bool) -> None:
 
 
 @cli.command(short_help="install the given version of a mod")
-@click.argument("mod_id", required=True, type=click.STRING)  # type: ignore
-@click.argument("version_id", required=True, type=click.STRING)  # type: ignore
+@click.argument("mod_id", required=True, type=click.STRING)
+@click.argument("version_id", required=True, type=click.STRING)
 @click.pass_context
 @handle_exceptions
 @coroutine
