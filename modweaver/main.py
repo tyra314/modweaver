@@ -1,14 +1,14 @@
 import asyncio
 import logging
-from contextlib import contextmanager, asynccontextmanager
+from contextlib import asynccontextmanager, contextmanager
 from functools import wraps
 from typing import (
     Any,
     AsyncGenerator,
     Awaitable,
     Callable,
-    List,
     Generator,
+    List,
     Optional,
     Tuple,
 )
@@ -20,14 +20,14 @@ import click_log  # type: ignore[import]
 from .config import Config
 from .format import (
     print_config,
+    print_error_message,
     print_installed_mod,
     print_mod,
     print_mod_concise,
     print_mod_version,
-    print_error_message,
 )
 from .mod import InstalledMod, ModVersion
-from .provider import ModProvider, SearchableModProvider, ReverseSearchableModProvider
+from .provider import ModProvider, ReverseSearchableModProvider, SearchableModProvider
 
 click_completion.init()
 

@@ -1,9 +1,8 @@
+from dataclasses import asdict, dataclass, field
 from datetime import datetime
+from typing import Any, Dict, List, Optional, Sequence, Set, cast
 
 from dateutil.parser import isoparse
-
-from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Sequence, Set, cast
 
 from . import config
 

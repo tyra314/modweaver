@@ -8,7 +8,7 @@ from aiohttp import ClientResponseError
 
 from .config import Config
 from .mod import DetailedMod, InstalledMod, Mod, ModVersion
-from .provider import SearchableModProvider, ReverseSearchableModProvider
+from .provider import ReverseSearchableModProvider, SearchableModProvider
 from .remote import RemoteAPI
 
 
