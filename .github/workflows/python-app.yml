@@ -45,4 +45,4 @@ jobs:
     - name: Format using black
       run: black --check .
     - name: Run mypy
-      run: mypy --strict aiocouch tests examples
+      run: mypy --strict modweaver
