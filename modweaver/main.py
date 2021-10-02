@@ -80,14 +80,7 @@ async def provider(
     provider = ctx.obj["PROVIDER"]
 
     if provider == "modrinth":
-        token = ctx.obj["MODRINTH_TOKEN"]
-
-        if not token:
-            raise ValueError(
-                "Missing token for Modrinth. (Set using --modrinth-token or environment variable MODRINTH_TOKEN)"
-            )
-
-        async with ModrinthAPI(token=token, config=config) as mapi:
+        async with ModrinthAPI(config=config) as mapi:
             yield mapi
     elif provider == "curseforge":
         async with CurseForgeAPI(config=config) as cfapi:
@@ -136,11 +129,6 @@ async def provider(
     flag_value="modrinth",
 )
 @click.option(
-    "--modrinth-token",
-    help="The GitHub OAuth Access Token for Modrinth authentification",
-    envvar="MODRINTH_TOKEN",
-)
-@click.option(
     "-p",
     "--provider",
     help="Select the source for downloading mods from",
@@ -160,13 +148,11 @@ def cli(
     config_file: str,
     debug: bool,
     provider: str,
-    modrinth_token: Optional[str],
 ) -> None:
     ctx.ensure_object(dict)
     ctx.obj["CONFIG"] = config_file
     ctx.obj["DEBUG"] = debug
     ctx.obj["PROVIDER"] = provider
-    ctx.obj["MODRINTH_TOKEN"] = modrinth_token
 
 
 @cli.command(short_help="initialize a new mod list")

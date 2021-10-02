@@ -21,17 +21,6 @@ python -m venv venv
 pip install .
 ```
 
-### Modrinth Authentification
-
-Modrinth requires you to provide a GitHub OAuth token to access their API.
-You can get one with your GitHub account:
-
-1. Visit this page: https://github.com/settings/tokens
-2. Select `Personal access tokens`
-3. Generate a token with `read:user` and `user:email` scopes
-4. Provide the token to modweaver using `--modrinth-token` or the environment variable `MODRINTH_TOKEN`
-
-
 ## Getting started
 
 The first step is to create a new mod environment. For that, we use the `init` command

@@ -6,33 +6,20 @@ import aiofiles
 from aiohttp import ClientResponseError
 from dateutil.parser import isoparse
 
-from .config import Config
 from .mod import DetailedMod, InstalledMod, Mod, ModVersion
 from .provider import ReverseSearchableModProvider, SearchableModProvider
 from .remote import RemoteAPI
 
 
 class ModrinthRemoteAPI(RemoteAPI):
-    def __init__(self, token: str):
-        self.token = token
-
     @property
     def base_url(self) -> str:
         return "https://api.modrinth.com/api/v1/"
-
-    @property
-    def request_headers(self) -> Dict[str, str]:
-        return {"Authorization": self.token}
 
 
 class ModrinthAPI(
     ModrinthRemoteAPI, SearchableModProvider, ReverseSearchableModProvider
 ):
-    def __init__(self, token: str, config: Config):
-        super(ModrinthRemoteAPI, self).__init__(token)  # type: ignore
-        super(SearchableModProvider, self).__init__(config)
-        super(ReverseSearchableModProvider, self).__init__(config)
-
     @property
     def provider_id(self) -> str:
         return "modrinth"
