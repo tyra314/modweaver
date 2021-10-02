@@ -4,7 +4,6 @@ from typing import Any, AsyncGenerator, Dict, List, cast
 
 import aiofiles
 from aiohttp import ClientResponseError
-
 from dateutil.parser import isoparse
 
 from .config import Config
