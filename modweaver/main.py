@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import platform
+import sys
 from contextlib import asynccontextmanager, contextmanager
 from functools import wraps
 from typing import (
@@ -40,6 +41,8 @@ click_log.basic_config(logger)
 def coroutine(f: Callable[..., Awaitable[None]]) -> Callable[..., None]:
     @wraps(f)
     def wrapper(*args: Any, **kwargs: Any) -> None:
+        if sys.platform.startswith("win"):
+            asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
         asyncio.run(f(*args, **kwargs))
 
     return wrapper
