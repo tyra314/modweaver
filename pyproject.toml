@@ -61,7 +61,7 @@ warn_return_any = true
 warn_no_return = true
 strict_optional = true
 no_implicit_optional = true
-exclude = 'setup.py|\.?.*env|conf.py|modweaver/version.py'
+exclude = 'setup.py|\.?.*env|conf.py'
 
 [tool.pylint.messages_control]
 disable = "C0330, C0326"
