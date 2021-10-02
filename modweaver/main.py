@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import platform
 from contextlib import asynccontextmanager, contextmanager
 from functools import wraps
 from typing import (
@@ -28,6 +29,7 @@ from .format import (
 )
 from .mod import InstalledMod, ModVersion
 from .provider import ModProvider, ReverseSearchableModProvider, SearchableModProvider
+from .version import version as modweaver_version
 
 click_completion.init()
 
@@ -144,6 +146,12 @@ async def provider(
     help="Select the source for downloading mods from",
     default="modrinth",
     type=click.Choice(["modrinth", "curseforge"], case_sensitive=False),
+)
+@click.version_option(
+    modweaver_version,
+    "-V",
+    "--version",
+    message=f"%(prog)s, version %(version)s (Python {platform.python_version()})",
 )
 @click_log.simple_verbosity_option(logger)  # type: ignore
 @click.pass_context

@@ -2,6 +2,9 @@
 requires = ["setuptools>=40.6.0", "wheel", "setuptools_scm[toml]~=6.0"]
 build-backend = 'setuptools.build_meta'
 
+[tool.setuptools_scm]
+write_to = "modweaver/version.py"
+
 [tool.black]
 line-length = 88
 target_version = ['py37']
