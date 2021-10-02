@@ -56,7 +56,12 @@ def handle_exceptions(f: Callable[..., None]) -> Callable[..., None]:
 
 @contextmanager
 def load_or_fail(ctx: click.Context) -> Generator[Config, None, None]:
-    config = Config.load_from(ctx.obj["CONFIG"])
+    try:
+        config = Config.load_from(ctx.obj["CONFIG"])
+    except FileNotFoundError as e:
+        raise RuntimeError(
+            "Directory not initialized. Run `modweaver init MC_VERSION MOD_LOADER` to fix."
+        ) from e
 
     yield config
 

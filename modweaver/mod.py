@@ -1,8 +1,6 @@
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
-from typing import Any, Dict, List, Optional, Sequence, Set, cast
-
-from dateutil.parser import isoparse
+from typing import Dict, List, Optional, Sequence, Set
 
 from . import config
 
@@ -17,19 +15,6 @@ class ModVersion:
     date: datetime
     loaders: List[str] = field(default_factory=list)
     game_versions: List[str] = field(default_factory=list)
-
-    @staticmethod
-    def from_json(data: Dict[str, Any]) -> "ModVersion":
-        return ModVersion(
-            id=data["id"],
-            modid=data["mod_id"],
-            version=data["version_number"],
-            filename=data["files"][0]["filename"],
-            url=data["files"][0]["url"],
-            loaders=data["loaders"],
-            game_versions=data["game_versions"],
-            date=isoparse(data["date_published"]),
-        )
 
     def matches(self, config: "config.Config") -> bool:
         return config.version in self.game_versions and config.loader in self.loaders
