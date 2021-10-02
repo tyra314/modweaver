@@ -1,9 +1,9 @@
-from typing import Any, Dict, List, Optional, cast
 from contextlib import suppress
+from typing import Any, Dict, List, Optional, cast
 
+import aiofiles
 import aiohttp
 from aiohttp import ClientResponseError
-import aiofiles
 
 from .config import Config
 from .mod import DetailedMod, InstalledMod, Mod, ModVersion

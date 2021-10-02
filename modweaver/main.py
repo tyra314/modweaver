@@ -1,33 +1,35 @@
 import asyncio
 import logging
-from contextlib import contextmanager, asynccontextmanager
+import platform
+from contextlib import asynccontextmanager, contextmanager
 from functools import wraps
 from typing import (
     Any,
     AsyncGenerator,
     Awaitable,
     Callable,
-    List,
     Generator,
+    List,
     Optional,
     Tuple,
 )
 
 import click
-import click_completion
-import click_log
+import click_completion  # type: ignore[import]
+import click_log  # type: ignore[import]
 
 from .config import Config
 from .format import (
     print_config,
+    print_error_message,
     print_installed_mod,
     print_mod,
     print_mod_concise,
     print_mod_version,
-    print_error_message,
 )
 from .mod import InstalledMod, ModVersion
-from .provider import ModProvider, SearchableModProvider, ReverseSearchableModProvider
+from .provider import ModProvider, ReverseSearchableModProvider, SearchableModProvider
+from .version import version as modweaver_version
 
 click_completion.init()
 
@@ -56,7 +58,12 @@ def handle_exceptions(f: Callable[..., None]) -> Callable[..., None]:
 
 @contextmanager
 def load_or_fail(ctx: click.Context) -> Generator[Config, None, None]:
-    config = Config.load_from(ctx.obj["CONFIG"])
+    try:
+        config = Config.load_from(ctx.obj["CONFIG"])
+    except FileNotFoundError as e:
+        raise RuntimeError(
+            "Directory not initialized. Run `modweaver init MC_VERSION MOD_LOADER` to fix."
+        ) from e
 
     yield config
 
@@ -77,7 +84,7 @@ async def provider(
 
         if not token:
             raise ValueError(
-                f"Missing token for Modrinth. (Set using --modrinth-token or environment variable MODRINTH_TOKEN)"
+                "Missing token for Modrinth. (Set using --modrinth-token or environment variable MODRINTH_TOKEN)"
             )
 
         async with ModrinthAPI(token=token, config=config) as mapi:
@@ -140,7 +147,13 @@ async def provider(
     default="modrinth",
     type=click.Choice(["modrinth", "curseforge"], case_sensitive=False),
 )
-@click_log.simple_verbosity_option(logger)
+@click.version_option(
+    modweaver_version,
+    "-V",
+    "--version",
+    message=f"%(prog)s, version %(version)s (Python {platform.python_version()})",
+)
+@click_log.simple_verbosity_option(logger)  # type: ignore
 @click.pass_context
 def cli(
     ctx: click.Context,
@@ -185,7 +198,7 @@ async def init(
 
         Path(file).unlink(missing_ok=True)
     Config.init(file, version=game_version, loader=mod_loader)
-    print(f"Initialized.")
+    print("Initialized.")
 
 
 @cli.command(short_help="Search for matching mods")

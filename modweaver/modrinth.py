@@ -1,14 +1,14 @@
 import asyncio
 import hashlib
-from typing import Any, AsyncGenerator, Dict, List, Optional, TypeVar, cast, overload
+from typing import Any, AsyncGenerator, Dict, List, cast
 
 import aiofiles
-import aiohttp
 from aiohttp import ClientResponseError
+from dateutil.parser import isoparse
 
 from .config import Config
 from .mod import DetailedMod, InstalledMod, Mod, ModVersion
-from .provider import SearchableModProvider, ReverseSearchableModProvider
+from .provider import ReverseSearchableModProvider, SearchableModProvider
 from .remote import RemoteAPI
 
 
@@ -41,7 +41,19 @@ class ModrinthAPI(
         return cast("ModrinthAPI", await super().__aenter__())
 
     async def _load_version_info(self, version: str) -> ModVersion:
-        return ModVersion.from_json(await self._get(f"version/{version}"))
+        return self.parse_json_to_version(await self._get(f"version/{version}"))
+
+    def parse_json_to_version(self, data: Dict[str, Any]) -> ModVersion:
+        return ModVersion(
+            id=data["id"],
+            modid=data["mod_id"],
+            version=data["version_number"],
+            filename=data["files"][0]["filename"],
+            url=data["files"][0]["url"],
+            loaders=data["loaders"],
+            game_versions=data["game_versions"],
+            date=isoparse(data["date_published"]),
+        )
 
     async def info(self, modid: str) -> Mod:
         try:
@@ -138,7 +150,7 @@ class ModrinthAPI(
 
         try:
             data = await self._get(f"version_file/{sha}?algorithm=sha1")
-            version = ModVersion.from_json(data)
+            version = self.parse_json_to_version(data)
 
             info = await self.info(version.modid)
 
