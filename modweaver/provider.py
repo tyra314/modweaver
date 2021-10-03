@@ -31,7 +31,7 @@ class ModProvider(ABC):
             installed_mod = await self.download(info, versions[0])
         except Exception as e:
             raise RuntimeError(
-                f"Couldn't download version {installed_mod.installed_version} of the mod with id '{modid}'"
+                f"Couldn't download version {versions[0].version} of the mod with id '{modid}'"
             ) from e
 
         self.config.add_mod(installed_mod)
@@ -60,6 +60,10 @@ class ModProvider(ABC):
             raise RuntimeError(f"The mod with id '{modid}' is not installed.")
 
         installed_mod = self.config.mods[info.id]
+
+        if installed_mod.pinned:
+            return None
+
         upgrade_version = await self.find_upgrade(installed_mod)
 
         if upgrade_version:
@@ -67,7 +71,7 @@ class ModProvider(ABC):
                 mod = await self.download(info, upgrade_version)
             except Exception as e:
                 raise RuntimeError(
-                    f"Couldn't download version {mod.installed_version} of the mod with id '{modid}'"
+                    f"Couldn't download version {upgrade_version.version} of the mod with id '{modid}'"
                 ) from e
 
             self.config.remove_mod(installed_mod.id)

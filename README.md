@@ -94,7 +94,8 @@ modweaver --cf upgrade 123456
 
 ## Downgrade mods
 
-We can also roll back to a different version of the mod. The `versions` command can list compatible or even all versions for a given mod:
+If a particular release introduced a grave bug, we can roll back to a different version of the mod.
+The `versions` command can list compatible or even all versions for a given mod:
 
 ```
 modweaver --mr versions Abc12345
@@ -106,6 +107,21 @@ Using the mod id and version id, we can install the desired version:
 ```
 modweaver --mr versions Abc12345 DEFG5467
 modweaver --cf versions 123456 789101112
+```
+
+Once downgraded, we probably want to pin the current version of the mod, so it doesn't get automatically upgraded in the future.
+
+```
+modweaver pin Abc12345
+modweaver pin 123456
+```
+
+A pinned mod, won't be automatically upgrade, but it still gets listed by the `outdated` command.
+Of course, there is also an unpin command, which might come in handy, once the bug gets resolved in a newer release.
+
+```
+modweaver unpin Abc12345
+modweaver unpin 123456
 ```
 
 ## Search for mods

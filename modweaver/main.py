@@ -411,3 +411,43 @@ async def install(ctx: click.Context, mod_id: str, version_id: str) -> None:
 
             except Exception as e:
                 print_error_message(ctx, e)
+
+
+@cli.command(short_help="Pin the current installed version of the given mod")
+@click.argument("mod_id", required=True, type=click.STRING)
+@click.pass_context
+@handle_exceptions
+@coroutine
+async def pin(ctx: click.Context, mod_id: str) -> None:
+    with load_or_fail(ctx) as config:
+        try:
+            mod = config.mods[mod_id]
+            mod.pinned = True
+            print_installed_mod(mod)
+        except KeyError:
+            print_error_message(
+                ctx,
+                RuntimeError(f"The mod with the id '{mod_id}' is not installed."),
+            )
+        except Exception as e:
+            print_error_message(ctx, e)
+
+
+@cli.command(short_help="Unpin the given mod, so it can be upgraded")
+@click.argument("mod_id", required=True, type=click.STRING)
+@click.pass_context
+@handle_exceptions
+@coroutine
+async def unpin(ctx: click.Context, mod_id: str) -> None:
+    with load_or_fail(ctx) as config:
+        try:
+            mod = config.mods[mod_id]
+            mod.pinned = False
+            print_installed_mod(mod)
+        except KeyError:
+            print_error_message(
+                ctx,
+                RuntimeError(f"The mod with the id '{mod_id}' is not installed."),
+            )
+        except Exception as e:
+            print_error_message(ctx, e)

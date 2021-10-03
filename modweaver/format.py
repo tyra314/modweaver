@@ -63,8 +63,8 @@ def print_installed_mod(mod: InstalledMod) -> None:
     click.secho(" - ", nl=False)
     click.secho(mod.installed_version, nl=False)
     click.secho(
-        f" ({mod.installed_file})",
-        fg="bright_black",
+        f" ({mod.installed_file}{' pinned' if mod.pinned else ''})",
+        fg="bright_red" if mod.pinned else "bright_black",
     )
 
 
