@@ -65,7 +65,7 @@ def load_or_fail(ctx: click.Context) -> Generator[Config, None, None]:
         config = Config.load_from(ctx.obj["CONFIG"])
     except FileNotFoundError as e:
         raise RuntimeError(
-            "Directory not initialized. Run `modweaver init MC_VERSION MOD_LOADER` to fix."
+            f"Couldn't find the config file '{ctx.obj['CONFIG']}'. The directory may not be initialized. Run `modweaver init MC_VERSION MOD_LOADER` to fix."
         ) from e
 
     yield config
@@ -101,7 +101,7 @@ async def provider(
     default=False,
 )
 @click.option(
-    "-c",
+    "-C",
     "--config-file",
     help="alternate .mods.toml",
     default=".mods.toml",
