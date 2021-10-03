@@ -1,8 +1,7 @@
 from contextlib import suppress
-from typing import Any, Dict, List, Optional, cast
+from typing import Any, Dict, List, cast
 
 import aiofiles
-import aiohttp
 from aiohttp import ClientResponseError
 
 from .config import Config
@@ -124,8 +123,12 @@ class CurseForgeAPI(CurseForgeRemoteAPI, ReverseSearchableModProvider):
         except ClientResponseError as e:
             raise RuntimeError(f"Couldn't identify the mod in the file '{file}'") from e
 
-        if len(response["exactMatches"]) > 0:
-            match = response["exactMatches"][0]
+        try:
+            match = [
+                match
+                for match in response["exactMatches"]
+                if match["file"]["isAvailable"] and match["file"]["packageFingerprint"]
+            ][0]
 
             info = None
             with suppress(KeyError):
@@ -146,5 +149,5 @@ class CurseForgeAPI(CurseForgeRemoteAPI, ReverseSearchableModProvider):
             self.config.add_mod(installed_mod)
 
             return installed_mod
-        else:
-            raise RuntimeError(f"Couldn't identify the mod in the file '{file}'")
+        except (KeyError, IndexError) as e:
+            raise RuntimeError(f"Couldn't identify the mod in the file '{file}'") from e
