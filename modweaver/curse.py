@@ -1,5 +1,6 @@
+import asyncio
 from contextlib import suppress
-from typing import Any, Dict, List, cast
+from typing import Any, AsyncGenerator, Dict, List, Optional, cast
 
 import aiofiles
 from aiohttp import ClientResponseError
@@ -7,7 +8,7 @@ from aiohttp import ClientResponseError
 from .config import Config
 from .mod import DetailedMod, InstalledMod, Mod, ModVersion
 from .murmur2 import murmur2
-from .provider import ReverseSearchableModProvider
+from .provider import ReverseSearchableModProvider, SearchableModProvider
 from .remote import RemoteAPI
 
 
@@ -17,7 +18,9 @@ class CurseForgeRemoteAPI(RemoteAPI):
         return "https://addons-ecs.forgesvc.net/api/v2/"
 
 
-class CurseForgeAPI(CurseForgeRemoteAPI, ReverseSearchableModProvider):
+class CurseForgeAPI(
+    CurseForgeRemoteAPI, ReverseSearchableModProvider, SearchableModProvider
+):
     def __init__(self, config: Config):
         self.config = config
 
@@ -151,3 +154,33 @@ class CurseForgeAPI(CurseForgeRemoteAPI, ReverseSearchableModProvider):
             return installed_mod
         except (KeyError, IndexError) as e:
             raise RuntimeError(f"Couldn't identify the mod in the file '{file}'") from e
+
+    async def _parse_hits(self, hit: Dict[str, Any]) -> Optional[Mod]:
+        with suppress(KeyError):
+            info = await self.detailed_info(hit["id"])
+
+        versions = info.matching_versions(self.config)
+
+        if versions:
+            return Mod(
+                id=str(hit["id"]),
+                name=hit["name"],
+                author=", ".join(author["name"] for author in hit["authors"]),
+                website=hit["websiteUrl"],
+                description=hit["summary"],
+                categories=[category["name"] for category in hit["categories"]],
+            )
+
+        return None
+
+    async def search(self, name: str) -> AsyncGenerator[Mod, None]:
+        data = await self._get(
+            f"addon/search?gameId=432&sectionId=6&searchFilter={name}"
+        )
+
+        for aw in asyncio.as_completed(
+            [self._parse_hits(hit) for hit in cast(List[Dict[str, Any]], data)]
+        ):
+            mod = await aw
+            if mod:
+                yield mod
