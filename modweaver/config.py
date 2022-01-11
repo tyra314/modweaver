@@ -46,6 +46,20 @@ class Config(object):
 
         return self
 
+    def disable(self, mod: InstalledMod) -> None:
+        with suppress(FileNotFoundError):
+            os.rename(
+                mod.installed_file,
+                f"{mod.installed_file}.disabled",
+            )
+
+    def enable(self, mod: InstalledMod) -> None:
+        with suppress(FileNotFoundError):
+            os.rename(
+                f"{mod.installed_file}.disabled",
+                mod.installed_file,
+            )
+
     def add_mod(self, mod: InstalledMod) -> None:
         self.mods[mod.id] = mod
 

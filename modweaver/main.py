@@ -451,3 +451,45 @@ async def unpin(ctx: click.Context, mod_id: str) -> None:
             )
         except Exception as e:
             print_error_message(ctx, e)
+
+
+@cli.command(short_help="Enable the given mod, so it will be loaded")
+@click.argument("mod_id", required=True, type=click.STRING)
+@click.pass_context
+@handle_exceptions
+@coroutine
+async def enable(ctx: click.Context, mod_id: str) -> None:
+    with load_or_fail(ctx) as config:
+        try:
+            mod = config.mods[mod_id]
+            mod.disabled = False
+            config.enable(mod)
+            print_installed_mod(mod)
+        except KeyError:
+            print_error_message(
+                ctx,
+                RuntimeError(f"The mod with the id '{mod_id}' is not installed."),
+            )
+        except Exception as e:
+            print_error_message(ctx, e)
+
+
+@cli.command(short_help="Disable the given mod, so it won't be loaded")
+@click.argument("mod_id", required=True, type=click.STRING)
+@click.pass_context
+@handle_exceptions
+@coroutine
+async def disable(ctx: click.Context, mod_id: str) -> None:
+    with load_or_fail(ctx) as config:
+        try:
+            mod = config.mods[mod_id]
+            mod.disabled = True
+            config.disable(mod)
+            print_installed_mod(mod)
+        except KeyError:
+            print_error_message(
+                ctx,
+                RuntimeError(f"The mod with the id '{mod_id}' is not installed."),
+            )
+        except Exception as e:
+            print_error_message(ctx, e)

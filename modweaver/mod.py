@@ -29,6 +29,7 @@ class InstalledMod:
     installed_file: str
     source_url: str
     pinned: bool = False
+    disabled: bool = False
     provider_id: str = "modrinth"
 
     def asdict(self) -> Dict[str, str]:
