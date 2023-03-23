@@ -1,3 +1,5 @@
+# Prismlaucnher works for me instead. I won't touch this anymore.
+
 # modweaver
 A Minecraft CLI mod manager using Modrinth AND CurseForge
 
